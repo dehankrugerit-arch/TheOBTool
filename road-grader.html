@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road Grader Observation Checklist</title>
+<style>
+    :root { --primary: #3498db; --green: #27ae60; --red: #e74c3c; }
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f5f7fa; line-height: 1.5; }
+    .section { background: #fff; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
+    h1 { text-align: center; color: #2c3e50; margin: 0; }
+    h2 { border-bottom: 3px solid var(--primary); padding-bottom: 8px; color: #2c3e50; }
+    h3 { color: #2980b9; margin: 25px 0 10px; }
+    h4 { margin: 15px 0 8px; color: #2c3e50; }
+    .personal-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    textarea { height: 80px; resize: vertical; }
+
+    .checklist {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        gap: 10px 15px;
+        align-items: start;
+        margin: 15px 0;
+    }
+    .check-item { display: contents; }
+    .check-item input[type="checkbox"] {
+        width: 26px; height: 26px;
+        justify-self: center;
+        margin-top: 4px;
+        cursor: pointer;
+    }
+    .check-item label {
+        margin: 0;
+        padding-top: 4px;
+        font-weight: normal;
+        line-height: 1.5;
+    }
+
+    .sop { background: #e3f2fd; padding: 16px; border-left: 6px solid var(--primary); border-radius: 0 8px 8px 0; margin: 18px 0; }
+    .comments { margin-top: 20px; }
+
+    .assessment {
+        display: flex;
+        justify-content: flex-start;
+        gap: 40px;
+        margin: 20px 0;
+        font-weight: bold;
+        font-size: 17px;
+    }
+    .assessment label { 
+        display: flex;
+        align-items: center; 
+        gap: 10px;
+        cursor: pointer; }
+
+    .assessment input[type="checkbox"], .assessment input[type="radio"] {
+        width: 22px; height: 22px;
+    }
+
+    button {
+        padding: 11px 22px; margin: 6px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px;
+    }
+    .btn-print { background: var(--green); color: white; font-size: 19px; padding: 16px 50px; margin-top: 30px; }
+
+    .save-status { padding: 14px; background: #d4edda; color: #155724; border-left: 5px solid #28a745; border-radius: 6px; margin: 15px 0; display: none; font-weight: bold; }
+    #saved-list { background: #f8f9fa; padding: 18px; border-radius: 8px; margin-top: 12px; display: none; border: 1px solid #ddd; }
+
+    canvas { border: 1px solid #999; border-radius: 8px; width: 100%; height: 120px; background: #fff; touch-action: none; }
+    .signature { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-top: 20px; }
+
+    .camera-box { text-align: center; margin: 15px 0; }
+    video { width: 100%; max-width: 400px; height: 220px; border: 2px dashed #999; border-radius: 8px; background: #000; }
+    #placeholder-front, #placeholder-back { width:100%; height:220px; background:#f0f0f0; border:2px dashed #999; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; font-size:14px; }
+
+    .thresholds { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
+    .thresholds input { width: 80px; }
+
+    @media (max-width: 768px) {
+        .personal-details, .signature, .thresholds { grid-template-columns: 1fr; }
+        .assessment { flex-direction: column; gap: 15px; }
+    }
+    @media print {
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        html, body {
+            background: white !important;
+            margin: 0;
+            padding: 10mm;
+            font-size: 11pt;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+        .section { box-shadow: none !important; margin: 0 0 20px 0 !important; padding: 15px !important; page-break-inside: avoid; }
+        button, #saved-list, .save-status, .camera-box button, .thresholds { display: none !important; }
+        canvas { border: 2px solid #333 !important; page-break-inside: avoid; }
+        img[id^="photo-"] { max-width: 100% !important; height: auto !important; border: 3px solid #27ae60 !important; border-radius: 8px; }
+        h1, h2, h3, h4, h5 { page-break-after: avoid; }
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="section">
+    <h1>Road Grader Observation Checklist</h1>
+    <p style="text-align:center;font-weight:bold;margin:10px 0;">Unit Standard 116078 – Operate a Grader – NQF Level 2 – 26 Credits</p>
+</div>
+
+<div id="save-status" class="save-status">Saved!</div>
+
+<div class="section">
+    <h2>Personal Details</h2>
+    <div class="personal-details">
+        <div><label>Learner Name</label><input type="text" id="learnerName"></div>
+        <div><label>Learner ID</label><input type="text" id="learnerId"></div>
+        <div><label>Assessor Name</label><input type="text" id="assessorName"></div>
+        <div><label>Assessor ID</label><input type="text" id="assessorId"></div>
+        <div><label>Date of Assessment</label><input type="date" id="assessmentDate"></div>
+    <div id="saved-list"></div>
+</div>
+
+<div class="section">
+    <h2>1. Observation Checklist</h2>
+
+    <!-- SO1 -->
+    <div class="so">
+        <h3>Specific Outcome 1: Demonstrate Knowledge of the Functions of a Grader</h3>
+        <div class="criteria">
+            <h4>Assessment Criteria 1.1: The main function of the Grader is explained in accordance with manufacturer’s specifications.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Explain primary purpose: To level and grade surfaces such as roads or earthworks by adjusting the blade for precise material spreading and compaction, ensuring smooth gradients for drainage.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify key attachments: Moldboard (blade) for cutting (e.g., 4.2m width), circle for rotation, scarifier for breaking hard ground; verify hydraulic connections secure.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Describe operational limits: Max blade side shift (e.g., 0.8m), articulation angle (25°); consult specs to avoid structural stress during turns.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Emphasize safety: Functions integrate with site rules to prevent blade strikes or instability on slopes greater than 10%.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Demonstrate visually: Point to blade controls and drawbar to show grading path without engine operation.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_1"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h4>Assessment Criteria 1.2: Grader operation procedures are listed, and the main functions of all major components are explained in accordance with manufacturer’s specifications.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>List procedures: Pre-inspection, blade setup, controlled passes, cleanup, shutdown; sequence to ensure even grading and minimal rework.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain engine: Powers hydraulics and drive; check diesel oil (SAE 15W-40) and turbo for dust buildup to maintain power output.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain fuel system: Tank capacity (e.g., 400L); inspect filters and lines for clogs to support extended operations.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain hydraulic system: Controls blade lift/tilt (e.g., 200 bar pressure); monitor fluid (ISO VG 46) for leaks to prevent cylinder failure.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain electrical system: Gauges and lights; test alternator (24V) and wiring harness for faults in dusty environments.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain steering/articulation: Dual hydraulic for maneuverability; calibrate for precise turns without blade drift.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain cooling system: Air-cooled or radiator; clean fins daily to avoid overheating during prolonged grading.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_2"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_2"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_2"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h4>Assessment Criteria 1.3: Maximum operating capacities of the Grader are described in accordance with manufacturer’s specifications.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Locate capacity plate: On cab frame, listing max drawbar pull (e.g., 15kN) to guide towing attachments safely.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Describe blade specs: Cutting depth (0.3m), moldboard angle (45°); limit to soil type for efficiency.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain performance charts: Gradeability (20% slope loaded); factor in ballast for stability.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Verify setup: Adjust blade height per chart for current terrain, ensuring no exceedance of hydraulic limits.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Transport notes: Axle load 10 tons; secure blade raised during haulage on trailer.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_3"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_3"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_3"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO2 -->
+    <div class="so">
+        <h3>Specific Outcome 2: Start and Shut Down Grader</h3>
+        <div class="criteria">
+            <h4>Assessment Criteria 2.1: Pre-operational checks are carried out according to the daily inspection checklist.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Wear PPE: Hard hat, high-vis, gloves, ear protection; inspect for integrity to safeguard against flying debris or noise.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>External walk-around: Check tires (pressure 4 bar), blade edges for wear, lights/mirrors; scan for fluid leaks.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Engine bay: Verify oil/fuel/coolant; clean air filter, check belts and exhaust for blockages.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Blade and hydraulics: Grease pivot points (NLGI 2), test circle rotation; ensure no binding.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Cab: Adjust seat, test gauges/horn; confirm ROPS certification for rollover safety.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Sign checklist: Note any Class A/B/C defects, tag machine if unsafe.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments2_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets2_1"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets2_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h4>Assessment Criteria 2.2: Start-up and shutdown procedures are followed according to manufacturer’s specifications and worksite procedures.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Mount cab, secure belt; clear zone, activate beacon and sound horn to signal start.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Key on, check pre-start warnings; crank engine, idle 5 minutes monitoring temps/pressures.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Warm-up: Test steering/articulation at low RPM; verify blade response before full power.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Shutdown: Park straight, raise blade, idle 5 minutes; engage parking brake, key off, exit.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>After: Chock wheels, lock up, log hours/fuel; report anomalies to supervisor.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments2_2"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets2_2"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets2_2"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO3 -->
+    <div class="so">
+        <h3>Specific Outcome 3: Operate Grader</h3>
+        <div class="criteria">
+            <h4>Assessment Criteria 3.1: Grader is operated safely, minimizing hazards in accordance with statutory requirements.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Site survey: Mark utilities, assess slope (max 15°), set cones; plan passes for even coverage.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Blade setup: Angle for cut (30°), lower gradually; overlap passes by 0.3m to avoid ridges.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Travel: Forward at 5km/h, use articulation for curves; maintain 40m distance from others.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Hazard mitigation: Slow near edges, use spotter; comply with OHS Act for vibration exposure limits.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Finish: Water for compaction, inspect grade with string line; cleanup windrows.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Emergency: If loss of control, steer into bank; activate EMS shutdown if needed.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets3_1"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets3_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h4>Assessment Criteria 3.5: Concerns during operation are identified and addressed (e.g., temperature increase).</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Monitor gauges: If temp rises >90°C, reduce load/throttle to cool; check for blockages.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>For EMS Class A: Stop immediately, shutdown per procedure, tag out machine.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Class B: Note fault, continue if safe, schedule daily service repair.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Class C: Alarm sounds, limit to weekly fix; report to maintenance log.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Supervisor notify: Detail issue (e.g., "Hydraulic overheat"), actions taken.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_5"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets3_5"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets3_5"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h4>Assessment Criteria 3.6: At least 10 rules for risk-free operation are listed.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Do not operate with open door unless belted: Prevents ejection in rollover per OHS standards.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Stick to established roads: Minimizes environmental damage under ISO 14001.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Keep left unless overtaking: Ensures consistent traffic flow per site rules.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Obey speed limits (e.g., 8km/h): Protects machine life and control.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Maintain 40m following distance: Allows stopping time to avoid collisions.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Yield to laden trucks: Prioritizes heavier vehicles for safety.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Avoid electric cables: Prevents shocks or shorts in wet conditions.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Do not squash barricades: Maintains visibility and hazard markers.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Watch for pedestrians: Halt immediately to prevent strikes.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Wear seatbelt always: Complies with road act for restraint.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_6"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets3_6"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets3_6"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO4 -->
+    <div class="so">
+        <h3>Specific Outcome 4: Document Grader Use</h3>
+        <div class="criteria">
+            <h4>Assessment Criteria 4.1: Grader use is documented according to worksite procedures, including logs and reports.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Log metrics: Record hours, area graded (e.g., 500m²), fuel used in shift diary.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Defect entry: Detail EMS codes (e.g., "Class B - low oil"), fixes attempted.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Service update: Sign daily/weekly sheets, note grease intervals.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Incident log: Describe events (e.g., near-miss with pedestrian), witnesses, actions.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Handover: Verbal/written brief, e.g., "Blade sharpened, 200L fuel remaining."</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments4_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets4_1"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets4_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>2. Oral Knowledge Questionnaire (Essential Embedded Knowledge)</h2>
+    <div class="so">
+        <div class="criteria">
+            <h3>Question 1: Explain the main function of the Grader machine (Model Answer: To level and grade surfaces for roads and earthworks)</h3>
+            <div class="comments">
+                <label>Learner's Recorded Response:</label>
+                <textarea id="response1"></textarea>
+            </div>
+            <div class="assessment">
+                <label><input type="checkbox" name="oral1"> Meets Criteria</label>
+                <label><input type="checkbox" name="oral1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h3>Question 2: List Grader operation procedures and explain major components (Model Answer: Engine – Provide power; Fuel system – Combustion supply; Hydraulic – Blade control; Electrical – Gauges/lights; Braking – Stop vehicle; Cooling – Prevent overheating; etc.)</h3>
+            <div class="comments">
+                <label>Learner's Recorded Response:</label>
+                <textarea id="response2"></textarea>
+            </div>
+            <div class="assessment">
+                <label><input type="checkbox" name="oral2"> Meets Criteria</label>
+                <label><input type="checkbox" name="oral2"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h3>Question 3: Describe maximum operating capacities (Model Answer: E.g., blade width 4m, drawbar pull 15kN; show label on machine)</h3>
+            <div class="comments">
+                <label>Learner's Recorded Response:</label>
+                <textarea id="response3"></textarea>
+            </div>
+            <div class="assessment">
+                <label><input type="checkbox" name="oral3"> Meets Criteria</label>
+                <label><input type="checkbox" name="oral3"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h3>Question 4: What to do if concerns identified (e.g., temperature increase) (Model Answer: Stop, report; Class A immediate shutdown, B daily service, C weekly)</h3>
+            <div class="comments">
+                <label>Learner's Recorded Response:</label>
+                <textarea id="response4"></textarea>
+            </div>
+            <div class="assessment">
+                <label><input type="checkbox" name="oral4"> Meets Criteria</label>
+                <label><input type="checkbox" name="oral4"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+        <div class="criteria">
+            <h3>Question 5: List 10 rules for risk-free operation (Model Answer: Open door belt use, established roads, keep left, speed limits, 40m distance, yield trucks, avoid cables, no barricade squash, watch pedestrians, seatbelt always)</h3>
+            <div class="comments">
+                <label>Learner's Recorded Response:</label>
+                <textarea id="response5"></textarea>
+            </div>
+            <div class="assessment">
+                <label><input type="checkbox" name="oral5"> Meets Criteria</label>
+                <label><input type="checkbox" name="oral5"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Learner ID Photos</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
+        <!-- FRONT -->
+        <div class="camera-box">
+            <h4>Front</h4>
+            <div style="position:relative;width:100%;max-width:400px;margin:0 auto;">
+                <video id="video-front" autoplay playsinline style="display:none;"></video>
+                <img id="photo-front" style="display:none;max-width:100%;border:3px solid #27ae60;border-radius:8px;">
+                <div id="placeholder-front" style="width:100%;height:220px;background:#f0f0f0;border:2px dashed #999;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:14px;">
+                    No photo yet
+                </div>
+            </div>
+            <div style="margin:15px 0;text-align:center;">
+                <button type="button" class="btn-load" id="start-front">Start Camera</button>
+                <button type="button" class="btn-load" id="capture-front" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-front" style="display:none;">Retake</button>
+            </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="camera-box">
+            <h4>Back</h4>
+            <div style="position:relative;width:100%;max-width:400px;margin:0 auto;">
+                <video id="video-back" autoplay playsinline style="display:none;"></video>
+                <img id="photo-back" style="display:none;max-width:100%;border:3px solid #27ae60;border-radius:8px;">
+                <div id="placeholder-back" style="width:100%;height:220px;background:#f0f0f0;border:2px dashed #999;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#666;font-size:14px;">
+                    No photo yet
+                </div>
+            </div>
+            <div style="margin:15px 0;text-align:center;">
+                <button type="button" class="btn-load" id="start-back">Start Camera</button>
+                <button type="button" class="btn-load" id="capture-back" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-back" style="display:none;">Retake</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>3. Overall Assessment Summary</h2>
+    <div style="background:#e8f5e8;padding:18px;border-radius:8px;font-size:18px;">
+        <strong>Auto-Calculated Competence Score: <span id="score-display">0%</span> (based on 14 criteria)</strong>
+    </div>
+    <p id="score-advice" style="margin:10px 0;color:#155724;">Score Advice: Select overall assessment below.</p>
+    <div class="thresholds">
+        <div><label>Marginal Threshold (%): </label><input type="number" id="marginalThreshold" value="60" min="0" max="100"></div>
+        <div><label>Competent Threshold (%): </label><input type="number" id="competentThreshold" value="80" min="0" max="100"></div>
+    </div>
+    <div class="assessment" style="margin:25px 0;">
+        <label><input type="radio" name="overall" value="competent" required> Competent</label>
+        <label><input type="radio" name="overall" value="notyet"> Not Yet Competent</label>
+    </div>
+    <div class="comments">
+        <label>Overall Summary Comments:</label>
+        <textarea id="summaryComments"></textarea>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Signatures for Authenticity</h2>
+    <div class="signature">
+        <div><h3>Learner Signature</h3><canvas id="learnerSig"></canvas><p><em>Draw above or type below:</em></p><input type="text" id="learnerSigText" placeholder="Typed Name"></div>
+        <div><h3>Assessor Signature</h3><canvas id="assessorSig"></canvas><p><em>Draw above or type below:</em></p><input type="text" id="assessorSigText" placeholder="Typed Name"></div>
+        <div><h3>Moderator Signature</h3><canvas id="moderatorSig"></canvas><p><em>Draw above or type below:</em></p><input type="text" id="moderatorSigText" placeholder="Typed Name"><br><label>Date:</label><input type="date" id="moderationDate"><div class="comments"><label>Moderator Comments:</label><textarea id="moderatorComments"></textarea></div></div>
+    </div>
+    <div style="text-align:center;margin-top:30px;">
+        <button type="button" class="btn-print" onclick="validateAndPrint()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+let currentKey = null;
+
+// Mutual exclusive checkboxes
+document.addEventListener('DOMContentLoaded', () => {
+    const assessments = document.querySelectorAll('.assessment');
+    assessments.forEach(ass => {
+        const meets = ass.querySelector('input[name^="meets"], input[name^="oral"]');
+        const notmeets = ass.querySelector('input[name^="notmeets"]');
+        if (meets && notmeets) {
+            [meets, notmeets].forEach(cb => {
+                cb.addEventListener('change', () => {
+                    if (cb.checked) {
+                        meets.checked = (cb === meets);
+                        notmeets.checked = (cb === notmeets);
+                    }
+                    calculateScore();
+                });
+            });
+        }
+    });
+});
+
+function getKey() {
+    const assessor = document.getElementById('assessorId').value.trim() || 'unknown';
+    const date = new Date().toISOString().slice(0,10);
+    return `grader_${date}_${assessor}`;
+}
+
+function saveData() {
+    const key = currentKey || getKey();
+    const data = {
+        learnerName: document.getElementById('learnerName').value,
+        learnerId: document.getElementById('learnerId').value,
+        assessorName: document.getElementById('assessorName').value,
+        assessorId: document.getElementById('assessorId').value,
+        assessmentDate: document.getElementById('assessmentDate').value,
+        summaryComments: document.getElementById('summaryComments').value,
+        idPhotoFront: document.getElementById('photo-front').src || '',
+        idPhotoBack: document.getElementById('photo-back').src || '',
+        learnerSig: document.getElementById('learnerSig').toDataURL(),
+        assessorSig: document.getElementById('assessorSig').toDataURL(),
+        moderatorSig: document.getElementById('moderatorSig').toDataURL(),
+        learnerSigText: document.getElementById('learnerSigText').value,
+        assessorSigText: document.getElementById('assessorSigText').value,
+        moderatorSigText: document.getElementById('moderatorSigText').value,
+        moderationDate: document.getElementById('moderationDate').value,
+        moderatorComments: document.getElementById('moderatorComments').value,
+        marginalThreshold: document.getElementById('marginalThreshold').value,
+        competentThreshold: document.getElementById('competentThreshold').value,
+    };
+    document.querySelectorAll('textarea, input[type=text], input[type=date], input[type=number]').forEach(el => data[el.id] = el.value);
+    document.querySelectorAll('input[type=checkbox]:checked').forEach(cb => data[cb.name || cb.id] = true);
+    document.querySelectorAll('input[type=radio]:checked').forEach(r => data[r.name] = r.value);
+    localStorage.setItem(key, JSON.stringify(data));
+    currentKey = key;
+    showSaveStatus();
+    calculateScore();
+}
+
+function showSaveStatus() {
+    const el = document.getElementById('save-status');
+    el.style.display = 'block';
+    clearTimeout(window.st);
+    window.st = setTimeout(() => el.style.display = 'none', 2000);
+}
+
+function calculateScore() {
+    const checked = document.querySelectorAll('input[name^="meets"], input[name^="oral"]:checked').length;
+    const total = document.querySelectorAll('input[name^="meets"], input[name^="oral"]').length || 1;
+    const score = Math.round((checked / total) * 100);
+    document.getElementById('score-display').textContent = score + '%';
+
+    const marginalThreshold = parseInt(document.getElementById('marginalThreshold').value) || 60;
+    const competentThreshold = parseInt(document.getElementById('competentThreshold').value) || 80;
+    const advice = document.getElementById('score-advice');
+
+    let adviceText = '';
+    let overallValue = '';
+
+    if (score >= competentThreshold) {
+        adviceText = `Score Advice: Competent (>= ${competentThreshold}%).`;
+        overallValue = 'competent';
+    } else if (score >= marginalThreshold) {
+        adviceText = `Score Advice: Marginal (${marginalThreshold}-${competentThreshold}%) - Recommend additional training.`;
+    } else {
+        adviceText = `Score Advice: Not Yet Competent (< ${marginalThreshold}%) - Requires further assessment.`;
+        overallValue = 'notyet';
+    }
+
+    advice.textContent = adviceText;
+
+    // Auto-set overall radio if applicable
+    const overallRadio = document.querySelector(`input[name="overall"][value="${overallValue}"]`);
+    if (overallRadio && overallValue) {
+        overallRadio.checked = true;
+    }
+}
+
+function validateAndPrint() {
+    if (!document.querySelector('input[name="overall"]:checked')) {
+        alert('Please select Competent or Not Yet Competent');
+        return;
+    }
+    saveData();
+
+    // Check if running in Android WebView
+    if (typeof Android !== 'undefined' && Android.printToPDF) {
+        // Use Android's native PDF generation
+        setTimeout(() => Android.printToPDF(), 600);
+    } else {
+        // Fallback to browser print (for desktop/web)
+        setTimeout(() => window.print(), 600);
+    }
+}
+
+function hideList() { document.getElementById('saved-list').style.display = 'none'; }
+
+function loadSelected() {
+    const sel = document.getElementById('assessment-selector');
+    const key = sel.value;
+    if (!key) return;
+    const data = JSON.parse(localStorage.getItem(key));
+    currentKey = key;
+    Object.keys(data).forEach(k => {
+        const el = document.getElementById(k);
+        if (el) el.value = data[k];
+    });
+    document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+    Object.keys(data).forEach(k => {
+        if (data[k] === true) {
+            document.querySelectorAll(`input[name="${k}"], #${k}`).forEach(cb => cb.checked = true);
+        }
+    });
+    if (data.overall) document.querySelector(`input[name="overall"][value="${data.overall}"]`).checked = true;
+    ['learnerSig','assessorSig','moderatorSig'].forEach(id => {
+        if (data[id] && data[id].startsWith('data:image')) {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.getElementById(id);
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0);
+            };
+            img.src = data[id];
+        }
+    });
+    if (data.idPhotoFront) { 
+        document.getElementById('photo-front').src = data.idPhotoFront; 
+        document.getElementById('photo-front').style.display = 'block'; 
+        document.getElementById('placeholder-front').style.display = 'none';
+    }
+    if (data.idPhotoBack) { 
+        document.getElementById('photo-back').src = data.idPhotoBack; 
+        document.getElementById('photo-back').style.display = 'block'; 
+        document.getElementById('placeholder-back').style.display = 'none';
+    }
+    hideList();
+    calculateScore();
+}
+
+// Camera code - full and correct
+['front','back'].forEach(side => {
+    let stream = null;
+    const video = document.getElementById(`video-${side}`);
+    const photo = document.getElementById(`photo-${side}`);
+    const placeholder = document.getElementById(`placeholder-${side}`);
+
+    document.getElementById(`start-${side}`).onclick = () => {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(s => {
+                stream = s;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                photo.style.display = 'none';
+                document.getElementById(`capture-${side}`).disabled = false;
+                document.getElementById(`start-${side}`).style.display = 'none';
+            })
+            .catch(() => alert('Camera access denied or not available.'));
+    };
+
+    document.getElementById(`capture-${side}`).onclick = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const url = canvas.toDataURL('image/jpeg', 0.95);
+
+        photo.src = url;
+        photo.style.display = 'block';
+        video.style.display = 'none';
+        placeholder.style.display = 'none';
+        document.getElementById(`retake-${side}`).style.display = 'inline-block';
+        document.getElementById(`capture-${side}`).disabled = true;
+        document.getElementById(`start-${side}`).style.display = 'none';
+
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        saveData();
+    };
+
+    document.getElementById(`retake-${side}`).onclick = () => {
+        photo.style.display = 'none';
+        document.getElementById(`retake-${side}`).style.display = 'none';
+        document.getElementById(`capture-${side}`).disabled = true;
+        document.getElementById(`start-${side}`).style.display = 'inline-block';
+        placeholder.style.display = 'flex';
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+});
+
+// Signature pads - full
+['learnerSig','assessorSig','moderatorSig'].forEach(id => {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+    let drawing = false;
+
+    function getCoords(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX || e.touches[0].clientX) - rect.left,
+            y: (e.clientY || e.touches[0].clientY) - rect.top
+        };
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDraw);
+
+    function startDraw(e) {
+        drawing = true;
+        const coords = getCoords(e);
+        ctx.beginPath();
+        ctx.moveTo(coords.x, coords.y);
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+        e.preventDefault();
+        const coords = getCoords(e);
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+    }
+
+    function stopDraw() {
+        if (drawing) {
+            drawing = false;
+            saveData();
+        }
+    }
+
+    // Clear on double-click
+    canvas.addEventListener('dblclick', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+});
+
+// Auto-save and score update
+document.addEventListener('input', saveData);
+document.addEventListener('change', () => { saveData(); calculateScore(); });
+
+// Initialize
+document.getElementById('assessmentDate').value = new Date().toISOString().split('T')[0];
+document.getElementById('marginalThreshold').addEventListener('change', calculateScore);
+document.getElementById('competentThreshold').addEventListener('change', calculateScore);
+calculateScore();
+</script>
+</body>
+</html>

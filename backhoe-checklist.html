@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backhoe/Loader Observation Checklist</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+    :root { --primary: #3498db; --green: #27ae60; --red: #e74c3c; }
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f5f7fa; line-height: 1.5; }
+    .section { background: #fff; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
+    h1 { text-align: center; color: #2c3e50; margin: 0; }
+    h2 { border-bottom: 3px solid var(--primary); padding-bottom: 8px; color: #2c3e50; }
+    h3 { color: #2980b9; margin: 25px 0 10px; }
+    h4 { margin: 15px 0 8px; color: #2c3e50; }
+    .personal-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    textarea { height: 80px; resize: vertical; }
+
+    .checklist {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        gap: 10px 15px;
+        align-items: start;
+        margin: 15px 0;
+    }
+    .check-item { display: contents; }
+    .check-item input[type="checkbox"] {
+        width: 26px; height: 26px;
+        justify-self: center;
+        margin-top: 4px;
+        cursor: pointer;
+    }
+    .check-item label {
+        margin: 0;
+        padding-top: 4px;
+        font-weight: normal;
+        line-height: 1.5;
+    }
+
+    .sop { background: #e3f2fd; padding: 16px; border-left: 6px solid var(--primary); border-radius: 0 8px 8px 0; margin: 18px 0; }
+    .comments { margin-top: 20px; }
+
+    .assessment {
+        display: flex;
+        justify-content: flex-start;
+        gap: 40px;
+        margin: 20px 0;
+        font-weight: bold;
+        font-size: 17px;
+    }
+    .assessment label { 
+        display: flex;
+        align-items: center; 
+        gap: 10px;
+        cursor: pointer;
+    }
+    .assessment input[type="checkbox"], .assessment input[type="radio"] {
+        width: 22px; height: 22px;
+    }
+
+    button {
+        padding: 11px 22px; margin: 6px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px;
+        background: #3498db; color: white;
+    }
+    .btn-print { background: var(--green); font-size: 19px; padding: 16px 50px; margin-top: 30px; }
+    .btn-clear { background: var(--red); }
+
+    canvas { border: 1px solid #999; border-radius: 8px; width: 100%; height: 120px; background: #fff; touch-action: none; }
+    .signature { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-top: 20px; }
+
+    .camera-box { text-align: center; margin: 20px 0; }
+    .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    video, #photo-front, #photo-back {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .placeholder {
+        width: 100%; height: 220px; background: #f0f0f0; border: 2px dashed #999; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .personal-details, .signature { grid-template-columns: 1fr; }
+        .assessment { flex-direction: column; gap: 15px; }
+    }
+    @media print {
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        html, body {
+            background: white;
+            margin: 0;
+            padding: 10mm;
+            font-size: 11pt;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+        .section { box-shadow: none; margin: 0 0 20px; padding: 15px; page-break-inside: avoid; }
+        button, .camera-box button { display: none !important; }
+        canvas { border: 2px solid #333 !important; page-break-inside: avoid; }
+        #photo-front, #photo-back { max-width: 100%; height: auto; border: 3px solid #27ae60 !important; border-radius: 8px; }
+        h1, h2, h3, h4, h5 { page-break-after: avoid; }
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="section">
+    <h1>Backhoe/Loader Observation Checklist</h1>
+    <p style="text-align:center;font-weight:bold;margin:10px 0;">Unit Standard 262727 – NQF Level 2 – 15 Credits</p>
+</div>
+
+<div class="section">
+    <h2>Personal Details</h2>
+    <div class="personal-details">
+        <div><label for="learnerName">Learner Name</label><input type="text" id="learnerName"></div>
+        <div><label for="learnerId">Learner ID</label><input type="text" id="learnerId"></div>
+        <div><label for="assessorName">Assessor Name</label><input type="text" id="assessorName"></div>
+        <div><label for="assessorId">Assessor ID</label><input type="text" id="assessorId"></div>
+        <div><label for="assessmentDate">Date</label><input type="date" id="assessmentDate" value=""></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>1. Observation Checklist</h2>
+
+    <!-- SO1 -->
+    <div class="so">
+        <h3>Specific Outcome 1: Demonstrate Knowledge of the Functions of a Backhoe/Loader</h3>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 1.3: All safety features and warning devices on the Backhoe/Loader are identified, and their purposes explained</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Identify the hooter and explain its purpose: to warn personnel of machine movement or hazards</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify the parking brake and explain: holds machine stationary on slopes or when parked</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify implement lowering stop block and explain: prevents accidental lowering of attachments</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify rotating/beacon lights and explain: alerts others the machine is operational</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify air pressure gauge – explain action if pressure drops</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify transmission oil temperature/pressure gauge – high/low meaning</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify engine coolant temperature gauge – overheating procedure</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify engine oil pressure gauge – immediate action if low</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify hydraulic oil level/temperature gauge – action if low or hot</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify water temperature gauge – never open radiator cap when hot</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify fuel gauge and explain refuelling procedure (e.g. below 25%)</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q1" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q1" style="display:none;">
+                    <div id="placeholder-q1" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q1">Take Photo</button>
+                    <button type="button" id="capture-q1" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q1" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_3"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment1" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment1" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO2 -->
+    <div class="so">
+        <h3>Specific Outcome 2: Plan for work activities according to work site procedures</h3>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 2.1: Work activities are planned including sequence, risk assessment and resources</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Review job card / task instruction and understand scope of work</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Conduct site inspection and identify hazards (e.g. power lines, soft ground, pedestrians)</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Develop logical sequence of operations with safety checks included</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Estimate and allocate resources: fuel, attachments, spotter, transport</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Complete risk assessment, rate risks and apply controls (barricades, signs, spotter)</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Obtain supervisor approval before commencing work</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q2" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q2" style="display:none;">
+                    <div id="placeholder-q2" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q2">Take Photo</button>
+                    <button type="button" id="capture-q2" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q2" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments2_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment2" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment2" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO3 – Start & Shut Down (all 4 criteria with photo boxes) -->
+    <div class="so">
+        <h3>Specific Outcome 3: Start and Shut Down Backhoe/Loader</h3>
+
+        <!-- 3.1 -->
+        <div class="criteria">
+            <h4>Assessment Criteria 3.1: Pre-operational checks are carried out according to checklist</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Don correct PPE: hard hat, safety boots, hi-vis vest, hearing protection, gloves</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Perform full walk-around inspection: leaks, damage, loose parts, tracks/tyres</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Check all fluid levels: engine oil, coolant, hydraulic oil, fuel, battery water</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Inspect cab: seat belt, mirrors, controls clean, no loose items</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Test horn, lights, indicators and reverse alarm</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Complete pre-start checklist and sign</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q3" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q3" style="display:none;">
+                    <div id="placeholder-q3" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q3">Take Photo</button>
+                    <button type="button" id="capture-q3" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q3" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment3" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment3" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <!-- 3.2 -->
+        <div class="criteria">
+            <h4>Assessment Criteria 3.2: Daily and weekly operator maintenance performed</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Clean machine: bucket, radiator, undercarriage, cab glass</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Grease all required points (pins, bushings, linkages)</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Top up fluids if low; check for leaks</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Inspect and clean air filter; check belts and hoses</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Record machine status: Class A (do not operate), B or C</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Report defects and tag out if Class A</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q4" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q4" style="display:none;">
+                    <div id="placeholder-q4" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q4">Take Photo</button>
+                    <button type="button" id="capture-q4" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q4" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_2"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment4" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment4" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <!-- 3.3 -->
+        <div class="criteria">
+            <h4>Assessment Criteria 3.3: Checklist completed and corrective action taken</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Complete pre-start checklist – all items marked pass/fail</label></div>
+                    <div class="check-item"><input type="checkbox"><label>If defect found, take immediate corrective action or tag out</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Supervisor signs checklist confirming compliance</label></div>
+                    <div class="check-item"><input type="checkbox"><label>File completed checklist in site records</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q5" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q5" style="display:none;">
+                    <div id="placeholder-q5" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q5">Take Photo</button>
+                    <button type="button" id="capture-q5" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q5" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_3"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment5" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment5" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <!-- 3.4 -->
+        <div class="criteria">
+            <h4>Assessment Criteria 3.4: Start-up and shutdown procedures followed correctly</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Enter cab safely using 3-point contact</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Adjust seat, fasten seat belt, check controls</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Start engine and allow to idle – monitor gauges</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Sound hooter before moving; check area is clear</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Test brakes and steering before full operation</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Shutdown: park on level ground, lower implements, idle 3–5 mins, switch off, apply parking brake, remove key</label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q6" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q6" style="display:none;">
+                    <div id="placeholder-q6" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q6">Take Photo</button>
+                    <button type="button" id="capture-q6" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q6" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_4"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment6" value="meets"> Meets Criteria</label>
+                <label><input type="radio" name="assessment6" value="doesnot"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div class="section">
+    <h2>Learner ID Photos</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
+        <!-- FRONT -->
+        <div class="camera-box">
+            <h4>Front of ID</h4>
+            <div class="camera-container">
+                <video id="video-front" autoplay playsinline style="display:none;"></video>
+                <img id="photo-front" style="display:none;">
+                <div id="placeholder-front" class="placeholder">No photo yet</div>
+            </div>
+            <div style="margin-top:10px;">
+                <button type="button" id="start-front">Start Camera</button>
+                <button type="button" id="capture-front" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-front" style="display:none;">Retake</button>
+            </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="camera-box">
+            <h4>Back of ID</h4>
+            <div class="camera-container">
+                <video id="video-back" autoplay playsinline style="display:none;"></video>
+                <img id="photo-back" style="display:none;">
+                <div id="placeholder-back" class="placeholder">No photo yet</div>
+            </div>
+            <div style="margin-top:10px;">
+                <button type="button" id="start-back">Start Camera</button>
+                <button type="button" id="capture-back" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-back" style="display:none;">Retake</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Overall Assessment</h2>
+    <div style="background:#e8f5e8;padding:18px;border-radius:8px;font-size:18px;">
+        <strong>Score: <span id="score-display">0%</span></strong>
+    </div>
+    <div class="assessment" style="margin:25px 0;">
+        <label><input type="radio" name="overall" value="competent" required> Competent</label>
+        <label><input type="radio" name="overall" value="notyet"> Not Yet Competent</label>
+    </div>
+    <label>Summary Comments</label>
+    <textarea id="summaryComments"></textarea>
+</div>
+
+<div class="section">
+    <h2>Signatures</h2>
+    <div class="signature">
+        <div><h3>Learner</h3><canvas id="learnerSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Assessor</h3><canvas id="assessorSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Moderator</h3><canvas id="moderatorSig"></canvas><input type="text" placeholder="or type name"></div>
+    </div>
+    <div style="text-align:center;margin-top:30px;">
+        <button type="button" class="btn-print" onclick="validateAndPrint()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+// Set today's date by default
+document.getElementById('assessmentDate').valueAsDate = new Date('2025-12-01');
+
+// Calculate score
+function calculateScore() {
+    const meets = document.querySelectorAll('.assessment input[value="meets"]:checked').length;
+    const total = document.querySelectorAll('.criteria').length;
+    const percentage = total > 0 ? Math.round((meets / total) * 100) : 0;
+    document.getElementById('score-display').textContent = percentage + '%';
+}
+
+// Print validation
+async function validateAndPrint() {
+    if (!document.querySelector('input[name="overall"]:checked')) {
+        alert('Please select Competent or Not Yet Competent');
+        return;
+    }
+
+    // Generate PDF from form data
+    await generatePDF();
+}
+
+async function generatePDF() {
+    try {
+        // Show loading message
+        const loadingMsg = document.createElement('div');
+        loadingMsg.id = 'pdfLoading';
+        loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;z-index:9999;';
+        loadingMsg.textContent = 'Generating PDF...';
+        document.body.appendChild(loadingMsg);
+
+        // Check if jsPDF is loaded
+        if (typeof window.jspdf === 'undefined') {
+            document.body.removeChild(loadingMsg);
+            alert('PDF library not loaded. Please check your internet connection.');
+            console.error('jsPDF library not found');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+
+        let yPos = 15;
+        const pageWidth = 210;
+        const margin = 15;
+        const contentWidth = pageWidth - (margin * 2);
+
+        // Title
+        pdf.setFontSize(16);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Backhoe/Loader Observation Checklist', margin, yPos);
+        yPos += 7;
+        pdf.setFontSize(10);
+        pdf.text('Unit Standard 262727 - NQF Level 2 - 15 Credits', margin, yPos);
+        yPos += 10;
+
+        // Personal Information
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Personal Details', margin, yPos);
+        yPos += 7;
+
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'normal');
+
+        const learnerName = document.getElementById('learnerName')?.value || 'N/A';
+        const learnerId = document.getElementById('learnerId')?.value || 'N/A';
+        const assessorName = document.getElementById('assessorName')?.value || 'N/A';
+        const assessorId = document.getElementById('assessorId')?.value || 'N/A';
+        const date = document.getElementById('assessmentDate')?.value || 'N/A';
+
+        pdf.text(`Learner Name: ${learnerName}`, margin, yPos);
+        yPos += 5;
+        pdf.text(`Learner ID: ${learnerId}`, margin, yPos);
+        yPos += 5;
+        pdf.text(`Assessor Name: ${assessorName}`, margin, yPos);
+        yPos += 5;
+        pdf.text(`Assessor ID: ${assessorId}`, margin, yPos);
+        yPos += 5;
+        pdf.text(`Date: ${date}`, margin, yPos);
+        yPos += 10;
+
+        // Checklist Items with Photos and Assessments
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Observation Checklist', margin, yPos);
+        yPos += 7;
+
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+
+        // Get all checklist items
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+            if (yPos > 270) {
+                pdf.addPage();
+                yPos = 15;
+            }
+
+            const label = checkbox.nextElementSibling?.textContent?.trim() || checkbox.parentElement.textContent.trim();
+            const status = checkbox.checked ? '[✓]' : '[  ]';
+
+            const lines = pdf.splitTextToSize(`${status} ${label}`, contentWidth);
+            lines.forEach(line => {
+                if (yPos > 270) {
+                    pdf.addPage();
+                    yPos = 15;
+                }
+                pdf.text(line, margin, yPos);
+                yPos += 5;
+            });
+        });
+
+        yPos += 5;
+
+        // Section Assessments and Photos
+        const sections = [
+            { name: 'Section 1.3 - Pre-Operational Checks', assessment: 'assessment1', photo: 'photo-q1' },
+            { name: 'Section 2.1 - Planning', assessment: 'assessment2', photo: 'photo-q2' },
+            { name: 'Section 3.1 - Machine Operation', assessment: 'assessment3', photo: 'photo-q3' },
+            { name: 'Section 3.2 - Trenching', assessment: null, photo: 'photo-q4' },
+            { name: 'Section 3.3 - Loading', assessment: null, photo: 'photo-q5' },
+            { name: 'Section 3.4 - Shutdown', assessment: null, photo: 'photo-q6' }
+        ];
+
+        sections.forEach(section => {
+            // Check if there's an assessment or photo for this section
+            const hasAssessment = section.assessment && document.querySelector(`input[name="${section.assessment}"]:checked`);
+            const photoElement = document.getElementById(section.photo);
+            const hasPhoto = photoElement && photoElement.src && photoElement.src.startsWith('data:image');
+
+            if (hasAssessment || hasPhoto) {
+                if (yPos > 250) {
+                    pdf.addPage();
+                    yPos = 15;
+                }
+
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'bold');
+                pdf.text(section.name, margin, yPos);
+                yPos += 6;
+
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'normal');
+
+                // Add assessment result
+                if (hasAssessment) {
+                    const assessmentValue = document.querySelector(`input[name="${section.assessment}"]:checked`)?.value;
+                    const assessmentText = assessmentValue === 'meets' ? 'Meets Criteria' : 'Does Not Meet Criteria';
+                    pdf.text(`Assessment: ${assessmentText}`, margin, yPos);
+                    yPos += 5;
+                }
+
+                // Add photo
+                if (hasPhoto) {
+                    if (yPos > 200) {
+                        pdf.addPage();
+                        yPos = 15;
+                    }
+
+                    try {
+                        const imgFormat = photoElement.src.includes('image/png') ? 'PNG' : 'JPEG';
+                        pdf.addImage(photoElement.src, imgFormat, margin, yPos, 60, 45);
+                        yPos += 50;
+                        console.log(`${section.photo} added to PDF`);
+                    } catch (e) {
+                        console.error(`Error adding ${section.photo}:`, e);
+                        pdf.text('Error loading photo', margin, yPos);
+                        yPos += 5;
+                    }
+                }
+
+                yPos += 3;
+            }
+        });
+
+        yPos += 5;
+
+        // Comments
+        if (yPos > 250) {
+            pdf.addPage();
+            yPos = 15;
+        }
+
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Comments / Remarks', margin, yPos);
+        yPos += 7;
+
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'normal');
+
+        // Get all comment textareas
+        const commentIds = ['comments1_3', 'comments2_1', 'comments3_1', 'comments3_2', 'comments3_3', 'comments3_4', 'summaryComments'];
+        const commentLabels = [
+            'Section 1.3 Comments',
+            'Section 2.1 Comments',
+            'Section 3.1 Comments',
+            'Section 3.2 Comments',
+            'Section 3.3 Comments',
+            'Section 3.4 Comments',
+            'Summary Comments'
+        ];
+
+        commentIds.forEach((id, index) => {
+            const textarea = document.getElementById(id);
+            const commentText = textarea?.value?.trim();
+
+            if (commentText) {
+                if (yPos > 260) {
+                    pdf.addPage();
+                    yPos = 15;
+                }
+
+                pdf.setFont(undefined, 'bold');
+                pdf.text(`${commentLabels[index]}:`, margin, yPos);
+                yPos += 5;
+
+                pdf.setFont(undefined, 'normal');
+                const lines = pdf.splitTextToSize(commentText, contentWidth);
+                lines.forEach(line => {
+                    if (yPos > 270) {
+                        pdf.addPage();
+                        yPos = 15;
+                    }
+                    pdf.text(line, margin, yPos);
+                    yPos += 5;
+                });
+                yPos += 3;
+            }
+        });
+
+        yPos += 5;
+
+        // Overall Assessment
+        if (yPos > 260) {
+            pdf.addPage();
+            yPos = 15;
+        }
+
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Overall Assessment', margin, yPos);
+        yPos += 7;
+
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'normal');
+        const overallAssessment = document.querySelector('input[name="overall"]:checked')?.value || 'N/A';
+        pdf.text(`Result: ${overallAssessment}`, margin, yPos);
+        yPos += 10;
+
+        // Photos
+        const frontPhoto = document.getElementById('photo-front');
+        const backPhoto = document.getElementById('photo-back');
+        const hasFrontPhoto = frontPhoto && frontPhoto.src && frontPhoto.src.startsWith('data:image');
+        const hasBackPhoto = backPhoto && backPhoto.src && backPhoto.src.startsWith('data:image');
+
+        if (hasFrontPhoto || hasBackPhoto) {
+            if (yPos > 200) {
+                pdf.addPage();
+                yPos = 15;
+            }
+
+            pdf.setFontSize(12);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Photos', margin, yPos);
+            yPos += 7;
+
+            // Front photo
+            if (hasFrontPhoto) {
+                if (yPos > 200) {
+                    pdf.addPage();
+                    yPos = 15;
+                }
+
+                pdf.setFontSize(10);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('Front View:', margin, yPos);
+                yPos += 5;
+                try {
+                    // Determine image format
+                    const imgFormat = frontPhoto.src.includes('image/png') ? 'PNG' : 'JPEG';
+                    pdf.addImage(frontPhoto.src, imgFormat, margin, yPos, 80, 60);
+                    yPos += 65;
+                    console.log('Front photo added to PDF');
+                } catch (e) {
+                    console.error('Error adding front photo:', e);
+                    pdf.text('Error loading front photo', margin, yPos);
+                    yPos += 10;
+                }
+            }
+
+            // Back photo
+            if (hasBackPhoto) {
+                if (yPos > 200) {
+                    pdf.addPage();
+                    yPos = 15;
+                }
+
+                pdf.setFontSize(10);
+                pdf.setFont(undefined, 'normal');
+                pdf.text('Back View:', margin, yPos);
+                yPos += 5;
+                try {
+                    // Determine image format
+                    const imgFormat = backPhoto.src.includes('image/png') ? 'PNG' : 'JPEG';
+                    pdf.addImage(backPhoto.src, imgFormat, margin, yPos, 80, 60);
+                    yPos += 65;
+                    console.log('Back photo added to PDF');
+                } catch (e) {
+                    console.error('Error adding back photo:', e);
+                    pdf.text('Error loading back photo', margin, yPos);
+                    yPos += 10;
+                }
+            }
+
+            yPos += 5;
+        }
+
+        // Signatures
+        if (yPos > 180) {
+            pdf.addPage();
+            yPos = 15;
+        }
+
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Signatures', margin, yPos);
+        yPos += 7;
+
+        // Learner signature
+        const learnerSigCanvas = document.getElementById('learnerSig');
+        if (learnerSigCanvas && learnerSigCanvas.toDataURL) {
+            const learnerSigData = learnerSigCanvas.toDataURL('image/png');
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text('Learner Signature:', margin, yPos);
+            yPos += 5;
+            pdf.addImage(learnerSigData, 'PNG', margin, yPos, 60, 20);
+            yPos += 25;
+        }
+
+        // Assessor signature
+        const assessorSigCanvas = document.getElementById('assessorSig');
+        if (assessorSigCanvas && assessorSigCanvas.toDataURL) {
+            const assessorSigData = assessorSigCanvas.toDataURL('image/png');
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text('Assessor Signature:', margin, yPos);
+            yPos += 5;
+            pdf.addImage(assessorSigData, 'PNG', margin, yPos, 60, 20);
+            yPos += 25;
+        }
+
+        // Moderator signature
+        const moderatorSigCanvas = document.getElementById('moderatorSig');
+        if (moderatorSigCanvas && moderatorSigCanvas.toDataURL) {
+            const moderatorSigData = moderatorSigCanvas.toDataURL('image/png');
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text('Moderator Signature:', margin, yPos);
+            yPos += 5;
+            pdf.addImage(moderatorSigData, 'PNG', margin, yPos, 60, 20);
+            yPos += 25;
+        }
+
+        // Save PDF
+        const fileName = `Backhoe_Checklist_${learnerName.replace(/\s+/g, '_')}_${date}.pdf`;
+
+        // Check if running in Android WebView
+        if (typeof Android !== 'undefined' && Android.savePDF) {
+            const pdfData = pdf.output('datauristring');
+            Android.savePDF(pdfData, fileName);
+        } else {
+            pdf.save(fileName);
+        }
+
+        // Remove loading message
+        const loadingMsgElement = document.getElementById('pdfLoading');
+        if (loadingMsgElement) {
+            document.body.removeChild(loadingMsgElement);
+        }
+
+        alert('PDF generated successfully!');
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+
+        // Remove loading message
+        const loadingMsgElement = document.getElementById('pdfLoading');
+        if (loadingMsgElement) {
+            document.body.removeChild(loadingMsgElement);
+        }
+
+        alert('Error generating PDF: ' + error.message);
+    }
+}
+
+function setupCamera(id) {
+    let stream = null;
+    const video = document.getElementById(`video-${id}`);
+    const photo = document.getElementById(`photo-${id}`);
+    const placeholder = document.getElementById(`placeholder-${id}`);
+    const startBtn = document.getElementById(`start-${id}`);
+    const captureBtn = document.getElementById(`capture-${id}`);
+    const retakeBtn = document.getElementById(`retake-${id}`);
+
+    startBtn.onclick = async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment', width: { ideal: 300 }, height: { ideal: 300 } }
+            });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            photo.style.display = 'none';
+            placeholder.style.display = 'none';
+            captureBtn.disabled = false;
+        } catch (err) {
+            alert('Camera not available');
+        }
+    };
+
+    captureBtn.onclick = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        photo.src = canvas.toDataURL('image/jpeg', 0.9);
+        photo.style.display = 'block';
+        video.style.display = 'none';
+        placeholder.style.display = 'none';
+        retakeBtn.style.display = 'inline-block';
+        captureBtn.disabled = true;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+
+    retakeBtn.onclick = () => {
+        photo.style.display = 'none';
+        retakeBtn.style.display = 'none';
+        placeholder.style.display = 'flex';
+        captureBtn.disabled = true;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+}
+
+// Signature pads
+['learnerSig', 'assessorSig', 'moderatorSig'].forEach(id => {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    let drawing = false;
+
+    const startDrawing = (e) => {
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    };
+
+    // Fix high-DPI scaling and pointer coordinates so the line follows the pointer correctly
+    const resizeCanvas = () => {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        // set internal pixel size to CSS size * ratio
+        canvas.width = Math.round(rect.width * ratio);
+        canvas.height = Math.round(rect.height * ratio);
+        // map drawing calls so we can use CSS pixel coordinates directly
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        // keep stroke style consistent after transform
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const draw = (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0].clientX);
+        const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0].clientY);
+        if (clientX === undefined || clientY === undefined) return;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    };
+
+    const stopDrawing = () => { drawing = false; };
+
+    canvas.addEventListener('mousedown', (e) => { startDrawing(e); });
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+    canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDrawing(e); }, { passive: false });
+});
+
+// Initialize
+calculateScore();
+document.querySelectorAll('.assessment input').forEach(input => input.addEventListener('change', calculateScore));
+setupCamera('q1');
+setupCamera('q2');
+setupCamera('q3');
+setupCamera('q4');
+setupCamera('q5');
+setupCamera('q6');
+setupCamera('front');
+setupCamera('back');
+</script>
+</body>
+</html>

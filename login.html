@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessor Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #2c3e50;
+            --error-color: #e74c3c;
+            --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+            --border-radius: 16px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            padding: 3rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .login-card h2 {
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(52,152,219,0.3);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        input:focus { outline: none; border-color: var(--primary-color); }
+        .login-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .error-msg {
+            color: var(--error-color);
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>Assessor Login</h2>
+        <form id="loginForm">
+            <label for="assessorId">Assessor ID:</label>
+            <input type="text" id="assessorId" placeholder="Enter your ID (e.g. A001)" required autofocus>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <div id="error-msg" class="error-msg">Invalid ID. Please try again.</div>
+    </div>
+
+    <script>
+    let assessors = [];
+
+function loadAssessors() {
+    try {
+        console.log("Loading assessors.json...");
+
+        // Use XMLHttpRequest instead of fetch for better Android WebView compatibility
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'assessors.json', true);
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    assessors = JSON.parse(xhr.responseText);
+                    console.log("Assessors loaded successfully:", assessors);
+
+                    // Set up the login form only when data is ready
+                    setupLoginForm();
+                } catch (parseError) {
+                    console.error("JSON parse error:", parseError);
+                    showError();
+                }
+            } else {
+                console.error("Failed to load assessors.json - Status:", xhr.status);
+                showError();
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error("Network error loading assessors.json");
+            showError();
+        };
+
+        xhr.send();
+
+    } catch (error) {
+        console.error("Error:", error);
+        showError();
+    }
+}
+
+function showError() {
+    document.getElementById('loginForm').innerHTML =
+        '<p style="color:#e74c3c; font-weight:600;">Assessor data not available. Please fix the server and refresh.</p>';
+}
+
+    function setupLoginForm() {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('assessorId').value.trim().toUpperCase();
+            const user = assessors.find(a => a.id === id);
+
+            if (user) {
+                localStorage.setItem('assessorId', user.id);
+                localStorage.setItem('assessorProfile', JSON.stringify({
+                    name: user.name,
+                    experience: user.experience || "",
+                    qualifications: user.qualifications || ""
+                }));
+                window.location.href = 'Dashboard.html';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('error-msg').style.display = 'none';
+                }, 3000);
+            }
+        });
+    }
+
+    // Start loading immediately
+    loadAssessors();
+</script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Front End Loader Observation Checklist</title>
+<style>
+    :root { --primary: #3498db; --green: #27ae60; --red: #e74c3c; }
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f5f7fa; line-height: 1.5; }
+    .section { background: #fff; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
+    h1 { text-align: center; color: #2c3e50; margin: 0; font-size: 28px; }
+    h2 { border-bottom: 3px solid var(--primary); padding-bottom: 8px; color: #2c3e50; margin-top: 30px; }
+    h3 { color: #2980b9; margin: 25px 0 10px; }
+    h4 { margin: 15px 0 8px; color: #2c3e50; }
+    .personal-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    textarea { height: 80px; resize: vertical; }
+
+    .checklist {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        gap: 10px 15px;
+        align-items: start;
+        margin: 15px 0;
+    }
+    .check-item { display: contents; }
+    .check-item input[type="checkbox"] {
+        width: 26px; height: 26px;
+        justify-self: center;
+        margin-top: 4px;
+        cursor: pointer;
+    }
+    .check-item label {
+        margin: 0;
+        padding-top: 4px;
+        font-weight: normal;
+        line-height: 1.5;
+    }
+
+    .sop { background: #e3f2fd; padding: 16px; border-left: 6px solid var(--primary); border-radius: 0 8px 8px 0; margin: 18px 0; }
+    .comments { margin-top: 20px; }
+
+    .assessment {
+        display: flex;
+        justify-content: flex-start;
+        gap: 40px;
+        margin: 20px 0;
+        font-weight: bold;
+        font-size: 17px;
+    }
+    .assessment label { 
+        display: flex;
+        align-items: center; 
+        gap: 10px;
+        cursor: pointer; 
+    }
+    .assessment input[type="checkbox"], .assessment input[type="radio"] {
+        width: 22px; height: 22px;
+    }
+
+    button {
+        padding: 11px 22px; margin: 6px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px;
+    }
+    .btn-print { background: var(--green); color: white; font-size: 19px; padding: 16px 50px; margin-top: 30px; }
+
+    canvas { border: 1px solid #999; border-radius: 8px; width: 100%; height: 120px; background: #fff; touch-action: none; }
+    .signature { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-top: 20px; }
+
+    .camera-box { text-align: center; margin: 15px 0; }
+    video { width: 100%; max-width: 400px; height: 220px; border: 2px dashed #999; border-radius: 8px; background: #000; }
+    #placeholder-front, #placeholder-back { 
+        width:100%; height:220px; background:#f0f0f0; border:2px dashed #999; border-radius:8px; 
+        display:flex; align-items:center; justify-content:center; color:#666; font-size:14px; 
+    }
+
+    @media (max-width: 768px) {
+        .personal-details, .signature { grid-template-columns: 1fr; }
+        .assessment { flex-direction: column; gap: 15px; }
+    }
+    @media print {
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        html, body {
+            background: white !important;
+            margin: 0;
+            padding: 10mm;
+            font-size: 11pt;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+        .section { box-shadow: none !important; margin: 0 0 20px 0 !important; padding: 15px !important; page-break-inside: avoid; }
+        button, .camera-box button { display: none !important; }
+        canvas { border: 2px solid #333 !important; page-break-inside: avoid; }
+        img[id^="photo-"] { max-width: 100% !important; height: auto !important; border: 3px solid #27ae60 !important; border-radius: 8px; }
+        h1, h2, h3, h4, h5 { page-break-after: avoid; }
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="section">
+    <h1>Front End Loader Observation Checklist</h1>
+    <p style="text-align:center;font-weight:bold;margin:10px 0;">Unit Standard 116102 – Operate a Front End Loader – NQF Level 2 – 16 Credits</p>
+</div>
+
+<div class="section">
+    <h2>Personal Details</h2>
+    <div class="personal-details">
+        <div><label>Learner Name</label><input type="text" id="learnerName"></div>
+        <div><label>Learner ID</label><input type="text" id="learnerId"></div>
+        <div><label>Assessor Name</label><input type="text" id="assessorName"></div>
+        <div><label>Assessor ID</label><input type="text" id="assessorId"></div>
+        <div><label>Date of Assessment</label><input type="date" id="assessmentDate"></div>
+    </div>
+</div>
+
+<!-- All your observation criteria, oral questions, photos, signatures remain exactly the same -->
+<!-- (Only the "Load/Clear" part has been removed) -->
+
+<div class="section">
+    <h2>1. Observation Checklist</h2>
+    <!-- [All 8 criteria exactly as before – unchanged] -->
+    <!-- SO1 -->
+    <!-- SO1 -->
+    <div class="so">
+        <h3>Specific Outcome 1: Demonstrate Knowledge of the Functions of a Front End Loader</h3>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 1.1: The main function of the Front End Loader is explained in accordance with manufacturer’s specifications.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Explain the primary purpose: To load, transport, and stockpile materials such as gravel, sand, or soil efficiently and safely.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Identify key attachments: Standard bucket (e.g., 3.0 m³ capacity), quick coupler, forks, rock bucket, etc.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Describe operational limits: Maximum dump height (e.g., 3m), reach, tipping load, breakout force.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Highlight safety integration: Functions must comply with site procedures to prevent overloading and rollover.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Demonstrate on machine: Point to loader arms, bucket tilt, lift cylinders without operating.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_1" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 1.2: Front End Loader operation procedures are listed, and the main functions of all major components are explained.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>List procedures: Pre-start inspection, controlled loading, safe travel, dumping, shutdown.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain engine: Diesel-powered to drive hydraulics and transmission.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain fuel system: Supplies diesel, check filters and lines.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain hydraulic system: Operates lift arms and bucket tilt (e.g., 200 bar).</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain electrical system: Powers indicators, lights, backup alarm.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain braking/transmission: Hydrostatic drive, service and parking brakes.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain cooling system: Radiator cools engine and hydraulic oil.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_2"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_2" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_2"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 1.4: Maximum operating capacities of the Front End Loader are described.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Locate capacity plate: On ROPS cab or frame.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Describe bucket capacity: E.g., 2.5 m³ struck, 3.0 m³ heaped.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Explain lift charts: Account for machine tilt and load center.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Verify on-site: Show reading for current bucket and counterweight setup.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Note transport limits: Gross weight 15 tons, secure bucket lowered.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments1_4"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets1_4" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets1_4"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO2 -->
+    <div class="so">
+        <h3>Specific Outcome 2: Start and Shut Down Front End Loader</h3>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 2.1: Pre-operational checks are carried out according to the daily inspection checklist.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Don PPE: Hard hat, high-vis vest, safety boots, gloves.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Walk-around inspection: Examine tires, bucket teeth, lights, mirrors.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Engine area: Check oil, fuel, coolant, hydraulic levels.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Cab and controls: Test seat belt, horn, wipers, gauges.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Undercarriage: Verify axle oil, articulation joint grease.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments2_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets2_1" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets2_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 2.4: Start-up and shutdown procedures are followed.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Enter cab, fasten seatbelt, adjust seat and mirrors.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Start engine: Key on, monitor warning lights, idle 3–5 minutes.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>During run: Check EMS warnings, hydraulic response.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Shutdown: Park level, lower bucket, idle 3 minutes, key off.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Post-check: Apply wheel chocks, lock cab, log hours.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments2_4"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets2_4" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets2_4"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO3 -->
+    <div class="so">
+        <h3>Specific Outcome 3: Operate Front End Loader</h3>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 3.1: Front End Loader is operated safely, minimizing hazards.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Site preparation: Inspect load area, remove obstacles, set cones.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Loading technique: Approach straight, penetrate pile fully, lift smoothly.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Travel safety: Carry load low (300mm), travel in reverse if visibility blocked.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Hazard control: Activate beacon, sound horn at blind spots.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Unloading: Dump at designated stockpile, avoid overhangs.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Emergency: If hydraulic failure, lower bucket immediately.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets3_1" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets3_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+
+        <div class="criteria">
+            <h4>Assessment Criteria 3.7: Statutory requirements including relevant codes of practice are adhered to.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Obey all road signs and signals.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Use only established haul roads.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Keep left unless overtaking safely.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Adhere to site speed limits (e.g., 15 km/h loaded).</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Maintain 40m following distance from other vehicles.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Yield right of way to loaded haul trucks.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments3_7"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets3_7" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets3_7"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO4 -->
+    <div class="so">
+        <h3>Specific Outcome 4: Document Front End Loader Use</h3>
+        <div class="criteria">
+            <h4>Assessment Criteria 4.1: Front End Loader use is documented according to worksite procedures.</h4>
+            <div class="sop">
+                <h5>Standard Operating Procedures:</h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label>Record operational hours: Log start/end times and total hours.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Note defects: Document EMS warnings or mechanical issues.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Update service records: Sign daily/weekly maintenance sheets.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Report incidents: Detail near-misses or damage in logbook.</label></div>
+                    <div class="check-item"><input type="checkbox"><label>Handover notes: Inform relief operator of fuel level, defects, work done.</label></div>
+                </div>
+            </div>
+            <div class="comments"><label>Comments / Remarks:</label><textarea id="comments4_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="checkbox" name="meets4_1" class="score-checkbox"> Meets Criteria</label>
+                <label><input type="checkbox" name="meets4_1"> Does Not Meet Criteria</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>2. Oral Knowledge Questionnaire (Essential Embedded Knowledge)</h2>
+
+    <div class="criteria">
+        <h4>Question 1: Explain the main function of the Front End Loader</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response1"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral1" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral1"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+    <div class="criteria">
+        <h4>Question 2: List major components and their functions</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response2"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral2" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral2"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+    <div class="criteria">
+        <h4>Question 3: Describe maximum operating capacities</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response3"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral3" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral3"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+    <div class="criteria">
+        <h4>Question 4: What to do if concerns are identified during operation</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response4"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral4" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral4"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+    <div class="criteria">
+        <h4>Question 5: List 6 rules for risk-free operation</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response5"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral5" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral5"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+    <div class="criteria">
+        <h4>Question 6: Explain safe loading and travel techniques</h4>
+        <div class="comments"><label>Learner’s Response:</label><textarea id="response6"></textarea></div>
+        <div class="assessment">
+            <label><input type="checkbox" name="oral6" class="score-checkbox"> Meets Criteria</label>
+            <label><input type="checkbox" name="oral6"> Does Not Meet Criteria</label>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Learner ID Photos</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
+        <div class="camera-box">
+            <h4>Front</h4>
+            <div style="position:relative;width:100%;max-width:400px;margin:0 auto;">
+                <video id="video-front" autoplay playsinline style="display:none;"></video>
+                <img id="photo-front" style="display:none;max-width:100%;border:3px solid #27ae60;border-radius:8px;">
+                <div id="placeholder-front">No photo yet</div>
+            </div>
+            <div style="margin:15px 0;text-align:center;">
+                <button type="button" class="btn-load" id="start-front">Start Camera</button>
+                <button type="button" class="btn-load" id="capture-front" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-front" style="display:none;">Retake</button>
+            </div>
+        </div>
+        <div class="camera-box">
+            <h4>Back</h4>
+            <div style="position:relative;width:100%;max-width:400px;margin:0 auto;">
+                <video id="video-back" autoplay playsinline style="display:none;"></video>
+                <img id="photo-back" style="display:none;max-width:100%;border:3px solid #27ae60;border-radius:8px;">
+                <div id="placeholder-back">No photo yet</div>
+            </div>
+            <div style="margin:15px 0;text-align:center;">
+                <button type="button" class="btn-load" id="start-back">Start Camera</button>
+                <button type="button" class="btn-load" id="capture-back" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-back" style="display:none;">Retake</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Overall Assessment Summary</h2>
+    <div style="background:#e8f5e8;padding:18px;border-radius:8px;font-size:18px;">
+        <strong>Auto-Calculated Competence Score: <span id="score-display">0%</span> (14 criteria)</strong>
+    </div>
+    <div class="assessment" style="margin:25px 0;">
+        <label><input type="radio" name="overall" value="competent" required> Competent</label>
+        <label><input type="radio" name="overall" value="notyet"> Not Yet Competent</label>
+    </div>
+    <label>Overall Summary Comments</label>
+    <textarea id="summaryComments"></textarea>
+</div>
+
+<div class="section">
+    <h2>Signatures for Authenticity</h2>
+    <div class="signature">
+        <div><h3>Learner</h3><canvas id="learnerSig"></canvas><input type="text" id="learnerSigText" placeholder="or type name"></div>
+        <div><h3>Assessor</h3><canvas id="assessorSig"></canvas><input type="text" id="assessorSigText" placeholder="or type name"></div>
+        <div><h3>Moderator</h3><canvas id="moderatorSig"></canvas><input type="text" id="moderatorSigText" placeholder="or type name"></div>
+    </div>
+    <div style="text-align:center;margin-top:30px;">
+        <button type="button" class="btn-print" onclick="validateAndPrint()">Print / Save as PDF</button>
+    </div>
+</div>
+</div>
+
+<!-- Oral Questions, ID Photos, Overall Summary, Signatures – all 100% intact -->
+
+<div class="section">
+    <h2>Signatures for Authenticity</h2>
+    <div class="signature">
+        <div><h3>Learner</h3><canvas id="learnerSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Assessor</h3><canvas id="assessorSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Moderator</h3><canvas id="moderatorSig"></canvas><input type="text" placeholder="or type name"></div>
+    </div>
+    <div style="text-align:center;margin-top:30px;">
+        <button type="button" class="btn-print" onclick="validateAndPrint()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+// NO localStorage loading/saving of entire forms anymore
+// Only camera capture & signatures are temporarily stored in memory
+
+function validateAndPrint() {
+    if (!document.querySelector('input[name="overall"]:checked')) {
+        alert('Please select Competent or Not Yet Competent');
+        return;
+    }
+
+    // Check if running in Android WebView
+    if (typeof Android !== 'undefined' && Android.printToPDF) {
+        // Use Android's native PDF generation
+        Android.printToPDF();
+    } else {
+        // Fallback to browser print (for desktop/web)
+        window.print();
+    }
+}
+
+function calculateScore() {
+    const checked = document.querySelectorAll('.score:checked').length;
+    const total = document.querySelectorAll('.score').length;
+    const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+    document.getElementById('score-display').textContent = percent + '%';
+}
+
+// Mutual exclusive checkboxes
+document.addEventListener('change', e => {
+    if (e.target.type === 'checkbox' && (e.target.name.startsWith('meets') || e.target.name.startsWith('oral'))) {
+        const name = e.target.name;
+        document.querySelectorAll(`input[name="${name}"]`).forEach(cb => {
+            if (cb !== e.target) cb.checked = false;
+        });
+        calculateScore();
+    }
+});
+
+// Camera (front & back) – fully working
+['front','back'].forEach(side => {
+    let stream = null;
+    const video = document.getElementById(`video-${side}`);
+    const photo = document.getElementById(`photo-${side}`);
+    const placeholder = document.getElementById(`placeholder-${side}`);
+
+    document.getElementById(`start-${side}`).onclick = () => {
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(s => {
+                stream = s;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+                document.getElementById(`capture-${side}`).disabled = false;
+                document.getElementById(`start-${side}`).style.display = 'none';
+            })
+            .catch(() => alert('Camera access denied'));
+    };
+
+    document.getElementById(`capture-${side}`).onclick = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const url = canvas.toDataURL('image/jpeg', 0.9);
+        photo.src = url;
+        photo.style.display = 'block';
+        video.style.display = 'none';
+        placeholder.style.display = 'none';
+        document.getElementById(`retake-${side}`).style.display = 'inline-block';
+        document.getElementById(`capture-${side}`).disabled = true;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+
+    document.getElementById(`retake-${side}`).onclick = () => {
+        photo.style.display = 'none';
+        document.getElementById(`retake-${side}`).style.display = 'none';
+        document.getElementById(`capture-${side}`).disabled = true;
+        document.getElementById(`start-${side}`).style.display = 'inline-block';
+        placeholder.style.display = 'flex';
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+});
+
+// Signature pads
+['learnerSig','assessorSig','moderatorSig'].forEach(id => {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#000';
+    let drawing = false;
+
+    const getCoords = e => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX || e.touches[0].clientX) - rect.left,
+            y: (e.clientY || e.touches[0].clientY) - rect.top
+        };
+    };
+
+    canvas.addEventListener('mousedown', e => { drawing = true; const c = getCoords(e); ctx.beginPath(); ctx.moveTo(c.x, c.y); });
+    canvas.addEventListener('mousemove', e => { if(drawing){ const c = getCoords(e); ctx.lineTo(c.x, c.y); ctx.stroke(); } });
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseout', () => drawing = false);
+    canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const c = getCoords(e.touches[0]); ctx.beginPath(); ctx.moveTo(c.x, c.y); });
+    canvas.addEventListener('touchmove', e => { e.preventDefault(); if(drawing){ const c = getCoords(e.touches[0]); ctx.lineTo(c.x, c.y); ctx.stroke(); } });
+    canvas.addEventListener('touchend', () => drawing = false);
+    canvas.addEventListener('dblclick', () => ctx.clearRect(0, 0, canvas.width, canvas.height));
+});
+
+// Set today’s date
+document.getElementById('assessmentDate').valueAsDate = new Date();
+calculateScore();
+</script>
+</body>
+</html>

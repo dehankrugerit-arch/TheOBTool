@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Assessors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 900px; margin: 0 auto; background: rgba(255,255,255,0.95); padding: 2rem; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        h2 { text-align: center; color: #2c3e50; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 2px solid #ddd; border-radius: 8px; }
+        button { padding: 12px 24px; margin: 10px 5px; border: none; border-radius: 8px; cursor: pointer; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .assessor { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 12px; border-left: 5px solid #3498db; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Admin – Manage Assessors</h2>
+    <p><strong>Admin Password:</strong></p>
+    <input type="password" id="adminPass" placeholder="Enter admin password">
+    <button class="btn-primary" onclick="checkAdmin()">Enter Admin Area</button>
+    <div id="adminArea" style="display:none; margin-top:20px;">
+
+        <h3>Add / Edit Assessor</h3>
+        <input type="text" id="id" placeholder="ID (e.g. A003)" style="text-transform:uppercase">
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="number" id="exp" placeholder="Years Experience">
+        <textarea id="quals" placeholder="Qualifications (one per line)" rows="4"></textarea>
+        <button class="btn-success" onclick="addOrUpdate()">Save Assessor</button>
+
+        <h3 style="margin-top:30px;">Current Assessors</h3>
+        <div id="list"></div>
+
+        <hr>
+        <button class="btn-success" onclick="saveFile()">Save & Overwrite assessors.json</button>
+    </div>
+</div>
+
+<script>
+    let assessors = [];
+
+    const SALT = "unique-salt-for-this-app-2025";  
+    const EXPECTED_HASH = "a47489a96ac72ff03f3a757c765f9f1397cd20724c8676491ccf6b70f5a41e28";
+
+    async function hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const keyMaterial = await crypto.subtle.importKey("raw", data, "PBKDF2", false, ["deriveBits"]);
+        const derivedBits = await crypto.subtle.deriveBits(
+            { name: "PBKDF2", salt: encoder.encode(SALT), iterations: 100000, hash: "SHA-256" },
+            keyMaterial,
+            256
+        );
+        return Array.from(new Uint8Array(derivedBits))
+            .map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+    async function checkAdmin() {
+        const entered = document.getElementById('adminPass').value;
+        if (!entered) return alert('Please enter password');
+
+        const hashed = await hashPassword(entered);
+        if (hashed === EXPECTED_HASH) {
+            document.getElementById('adminArea').style.display = 'block';
+            load();
+        } else {
+            alert('Wrong admin password');
+        }
+    }
+
+    async function load() {
+        try {
+            const r = await fetch('assessors.json');
+            assessors = await r.json();
+            showList();
+        } catch(e) {
+            const b = localStorage.getItem('assessorsBackup');
+            if (b) assessors = JSON.parse(b);
+            showList();
+        }
+    }
+
+    function showList() {
+        const div = document.getElementById('list');
+        div.innerHTML = '';
+        assessors.forEach((a, i) => {
+            const card = document.createElement('div');
+            card.className = 'assessor';
+            card.innerHTML = `
+                <strong>${a.id}</strong> – ${a.name} (${a.experience} years)<br>
+                <em>${a.qualifications.join(', ')}</em>
+                <div style="margin-top:8px;">
+                    <button onclick="edit(${i})">Edit</button>
+                    <button class="btn-danger" onclick="remove(${i})">Delete</button>
+                </div>
+            `;
+            div.appendChild(card);
+        });
+    }
+
+    window.edit = function(i) {
+        const a = assessors[i];
+        document.getElementById('id').value = a.id;
+        document.getElementById('name').value = a.name;
+        document.getElementById('exp').value = a.experience;
+        document.getElementById('quals').value = a.qualifications.join('\n');
+        assessors.splice(i, 1);
+        showList();
+    }
+
+    window.remove = function(i) {
+        if (confirm('Delete ' + assessors[i].id + '?')) {
+            assessors.splice(i, 1);
+            showList();
+        }
+    }
+
+    window.addOrUpdate = function() {
+        const id = document.getElementById('id').value.trim().toUpperCase();
+        const name = document.getElementById('name').value.trim();
+        const exp = parseInt(document.getElementById('exp').value);
+        const quals = document.getElementById('quals').value.split('\n').map(q => q.trim()).filter(q => q);
+
+        if (!id || !name || isNaN(exp)) return alert('Fill all fields');
+
+        if (assessors.some(a => a.id === id)) return alert('ID already exists!');
+
+        assessors.push({ id, name, experience: exp, qualifications: quals });
+        showList();
+        document.getElementById('id').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('exp').value = '';
+        document.getElementById('quals').value = '';
+        alert('Assessor added/updated!');
+    }
+
+    window.saveFile = async function() {
+        const data = JSON.stringify(assessors, null, 2);
+        try {
+            const handle = await window.showSaveFilePicker({
+                suggestedName: 'assessors.json',
+                types: [{ description: 'JSON', accept: {'application/json': ['.json']} }]
+            });
+            const w = await handle.createWritable();
+            await w.write(data);
+            await w.close();
+            alert('assessors.json saved successfully!');
+        } catch(e) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([data], {type:'application/json'}));
+            a.download = 'assessors.json';
+            a.click();
+            alert('Downloaded new assessors.json – replace the old one');
+        }
+        localStorage.setItem('assessorsBackup', data);
+    }
+</script>
+</body>
+</html>

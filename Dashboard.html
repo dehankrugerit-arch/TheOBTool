@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Operations Assessment Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --accent: #2c3e50;
+            --bg: #f8f9fa;
+            --text-muted: #7f8c8d;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --radius: 16px;
+            --shadow: 0 8px 25px rgba(0,0,0,0.15);
+            --transition: all 0.3s ease;
+        }
+        * { box-sizing: border-box; margin:0; padding:0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--accent);
+            padding: 20px;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+        .header h1 { font-size: 2.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .header p { font-size: 1.2rem; color: var(--text-muted); }
+
+        .profile-section {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .profile-header h2 { margin:0; font-size:1.8rem; }
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.6rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .logout-btn:hover { background:#c0392b; transform: translateY(-2px); }
+
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .detail-card {
+            background: var(--bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+        }
+        .detail-card h3 { margin: 0 0 1rem; color: var(--accent); font-weight: 600; }
+        .detail-card p, .detail-card li { color: var(--text-muted); margin: 0.4rem 0; }
+        .detail-card ul { padding-left: 1.2rem; list-style: disc; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        .checklist-card {
+            background: rgba(255,255,255,0.97);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border-top: 6px solid var(--primary);
+            text-align: center;
+        }
+        .checklist-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .checklist-card i {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .checklist-card h3 {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+            color: var(--accent);
+        }
+        .checklist-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.2rem;
+            font-size: 0.9rem;
+        }
+        .stat-number {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1.4rem;
+        }
+
+        .back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+        .back-btn:hover { background: var(--primary-dark); }
+
+        iframe {
+            width: 100%;
+            height: 85vh;
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .profile-details { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2rem; }
+            iframe { height: 75vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="dashboard">
+        <div class="header">
+            <h1>Plant Operations Assessment Dashboard</h1>
+            <p>Welcome back, <strong id="currentAssessor">Loading...</strong> — Select a machine to begin assessment</p>
+        </div>
+
+        <div class="profile-section">
+            <div class="profile-header">
+                <h2>Assessor Profile</h2>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+            <div class="profile-details">
+                <div class="detail-card">
+                    <h3>Assessor Details</h3>
+                    <p><strong>Name:</strong> <span id="assessorName">—</span></p>
+                    <p><strong>ID:</strong> <span id="assessorIdDisplay">—</span></p>
+                </div>
+                <div class="detail-card">
+                    <h3>Qualifications</h3>
+                    <ul id="assessorQuals">
+                        <li>Registered Assessor (ETDP SETA)</li>
+                        <li>Moderator Qualification</li>
+                        <li>Heavy Machinery Operation</li>
+                        <li>Safety & Risk Assessment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Your machine cards here (unchanged) -->
+        <div class="dashboard-grid">
+            <div class="checklist-card" onclick="loadChecklist('backhoe')">
+                <i class="fas fa-tractor"></i>
+                <h3>Backhoe/Loader</h3>
+                <p>Unit Standard: 262727 • NQF Level 2 • 15 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">15</div><div>Credits</div></div>
+                    <div><div class="stat-number">4</div><div>Outcomes</div></div>
+                </div>
+            </div>
+            <div class="checklist-card" onclick="loadChecklist('dumptruck')">
+                <i class="fas fa-truck"></i>
+                <h3>Articulated Dump Truck</h3>
+                <p>Unit Standard: 262745 • NQF Level 2 • 15 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">15</div><div>Credits</div></div>
+                    <div><div class="stat-number">4</div><div>Outcomes</div></div>
+                </div>
+            </div>
+            <div class="checklist-card" onclick="loadChecklist('excavator')">
+                <i class="fas fa-hard-hat"></i>
+                <h3>Hydraulic Excavator</h3>
+                <p>Unit Standard: 262744 • NQF Level 2 • 15 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">15</div><div>Credits</div></div>
+                    <div><div class="stat-number">4</div><div>Outcomes</div></div>
+                </div>
+            </div>
+            <div class="checklist-card" onclick="loadChecklist('loader')">
+                <i class="fas fa-wheel-loader"></i>
+                <h3>Front-End Loader</h3>
+                <p>Unit Standard: 262747 • NQF Level 2 • 12 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">12</div><div>Credits</div></div>
+                    <div><div class="stat-number">4</div><div>Outcomes</div></div>
+                </div>
+            </div>
+            <div class="checklist-card" onclick="loadChecklist('grader')">
+                <i class="fas fa-road"></i>
+                <h3>Road Grader</h3>
+                <p>Unit Standard: 262735 • NQF Level 3 • 15 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">15</div><div>Credits</div></div>
+                    <div><div class="stat-number">5</div><div>Outcomes</div></div>
+                </div>
+            </div>
+            <div class="checklist-card" onclick="loadChecklist('roller')">
+                <i class="fas fa-grip-lines"></i>
+                <h3>Road Roller</h3>
+                <p>Unit Standard: 116089 • NQF Level 2 • 8 Credits</p>
+                <div class="stats">
+                    <div><div class="stat-number">8</div><div>Credits</div></div>
+                    <div><div class="stat-number">4</div><div>Outcomes</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="checklist-view" style="display:none; margin-top:20px;">
+        <button class="back-btn" onclick="showDashboard()">Back to Dashboard</button>
+        <div id="checklist-content"></div>
+    </div>
+
+    <script>
+
+        function logout() {
+                localStorage.clear();
+                window.location.href = 'login.html';
+        }
+
+        // CORRECT WAY TO READ THE ASSESSOR DATA
+        const assessorId = localStorage.getItem('assessorId');
+        const profileJSON = localStorage.getItem('assessorProfile');
+
+        // If not logged in → redirect
+        if (!assessorId || !profileJSON) {
+            alert('Please log in first.');
+            window.location.href = 'login.html'; 
+        }
+
+        // Parse the stored JSON string
+        let profile;
+        try {
+            profile = JSON.parse(profileJSON);
+        } catch (e) {
+            console.error("Failed to parse assessorProfile:", e);
+            profile = { name: "Unknown", experience: "", qualifications: "" };
+        }
+
+        const assessorName = profile.name || "Unknown Assessor";
+
+        // Now fill in ALL the places with the name
+        document.getElementById('currentAssessor').textContent = assessorName;
+        document.getElementById('assessorName').textContent = assessorName;
+        document.getElementById('assessorIdDisplay').textContent = assessorId;
+
+        function loadChecklist(type) {
+            const files = {
+                backhoe:    'backhoe-checklist.html',
+                dumptruck:  'dump-truck.html',
+                excavator:  'excavator.html',
+                loader:     'front-end-loader.html',
+                grader:     'road-grader.html',
+                roller:     'roller.html'
+            };
+
+            const file = files[type];
+            if (!file) {
+                alert('Checklist not ready yet.');
+                return;
+            }
+
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('checklist-view').style.display = 'block';
+            document.getElementById('checklist-content').innerHTML = 
+                `<iframe src="${file}" onload="this.style.opacity=1;" style="opacity:0; transition:opacity 0.5s;"></iframe>`;
+        }
+
+        function showDashboard() {
+            document.getElementById('checklist-view').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

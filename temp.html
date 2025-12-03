@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NO title yet</title>
+<style>
+    :root { --primary: #3498db; --green: #27ae60; --red: #e74c3c; }
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f5f7fa; line-height: 1.5; }
+    .section { background: #fff; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 3px 12px rgba(0,0,0,0.1); page-break-inside: avoid; }
+    h1 { text-align: center; color: #2c3e50; margin: 0; }
+    h2 { border-bottom: 3px solid var(--primary); padding-bottom: 8px; color: #2c3e50; }
+    h3 { color: #2980b9; margin: 25px 0 10px; }
+    h4 { margin: 15px 0 8px; color: #2c3e50; }
+    .personal-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    label { font-weight: bold; display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+    textarea { height: 80px; resize: vertical; }
+
+    .checklist {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        gap: 10px 15px;
+        align-items: start;
+        margin: 15px 0;
+    }
+    .check-item { display: contents; }
+    .check-item input[type="checkbox"] {
+        width: 26px; height: 26px;
+        justify-self: center;
+        margin-top: 4px;
+        cursor: pointer;
+    }
+    .check-item label {
+        margin: 0;
+        padding-top: 4px;
+        font-weight: normal;
+        line-height: 1.5;
+    }
+
+    .sop { background: #e3f2fd; padding: 16px; border-left: 6px solid var(--primary); border-radius: 0 8px 8px 0; margin: 18px 0; }
+    .comments { margin-top: 20px; }
+
+    .assessment {
+        display: flex;
+        justify-content: flex-start;
+        gap: 40px;
+        margin: 20px 0;
+        font-weight: bold;
+        font-size: 17px;
+    }
+    .assessment label { 
+        display: flex;
+        align-items: center; 
+        gap: 10px;
+        cursor: pointer;
+    }
+    .assessment input[type="checkbox"], .assessment input[type="radio"] {
+        width: 22px; height: 22px;
+    }
+
+    button {
+        padding: 11px 22px; margin: 6px; border: none; border-radius: 6px; cursor: pointer; font-size: 15px;
+        background: #3498db; color: white;
+    }
+    .btn-print { background: var(--green); font-size: 19px; padding: 16px 50px; margin-top: 30px; }
+    .btn-clear { background: var(--red); }
+
+    canvas { border: 1px solid #999; border-radius: 8px; width: 100%; height: 120px; background: #fff; touch-action: none; }
+    .signature { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px; margin-top: 20px; }
+
+    .camera-box { text-align: center; margin: 20px 0; }
+    .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        background: #000;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    video, #photo-front, #photo-back {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    .placeholder {
+        width: 100%; height: 220px; background: #f0f0f0; border: 2px dashed #999; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .personal-details, .signature { grid-template-columns: 1fr; }
+        .assessment { flex-direction: column; gap: 15px; }
+    }
+    @media print {
+        body { background: white; margin: 0; padding: 10mm; font-size: 11pt; }
+        .section { box-shadow: none; margin: 0 0 20px; padding: 15px; page-break-inside: avoid; }
+        button, .camera-box button { display: none !important; }
+        canvas { border: 2px solid #333 !important; }
+        #photo-front, #photo-back { max-width: 100%; height: auto; border: 3px solid #27ae60 !important; border-radius: 8px; }
+    }
+</style>
+</head>
+<body>
+
+<div class="section">
+    <h1></h1>
+    <p style="text-align:center;font-weight:bold;margin:10px 0;"></p>
+</div>
+
+<div class="section">
+    <h2></h2>
+    <div class="personal-details">
+        <div><label>Learner name:</label><input type="text" id="learnerName"></div>
+        <div><label>Learner ID:</label><input type="text" id="learnerId"></div>
+        <div><label>Assessor Name:</label><input type="text" id="assessorName"></div>
+        <div><label>Assessor ID:</label><input type="text" id="assessorId"></div>
+        <div><label>Date:</label><input type="date" id="assessmentDate" value=""></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2></h2>
+
+    <!-- SO1 -->
+    <div class="so">
+        <h3></h3>
+
+        <div class="criteria">
+            <h4></h4>
+            <div class="sop">
+                <h5></h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q1" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q1" style="display:none;">
+                    <div id="placeholder-q1" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q1">Take Photo</button>
+                    <button type="button" id="capture-q1" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q1" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label></label><textarea id="comments1_3"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment1" value="meets">Meets criteria</label>
+                <label><input type="radio" name="assessment1" value="doesnot">Does not meets criteria</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- SO2 -->
+    <div class="so">
+        <h3></h3>
+
+        <div class="criteria">
+            <h4></h4>
+            <div class="sop">
+                <h5></h5>
+                <div class="checklist">
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                    <div class="check-item"><input type="checkbox"><label></label></div>
+                </div>
+            </div>
+
+            <div class="camera-box">
+                <div class="camera-container">
+                    <video id="video-q2" autoplay playsinline style="display:none;"></video>
+                    <img id="photo-q2" style="display:none;">
+                    <div id="placeholder-q2" class="placeholder">No photo yet</div>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <button type="button" id="start-q2">Take Photo</button>
+                    <button type="button" id="capture-q2" disabled>Capture</button>
+                    <button type="button" class="btn-clear" id="retake-q2" style="display:none;">Retake</button>
+                </div>
+            </div>
+
+            <div class="comments"><label></label><textarea id="comments2_1"></textarea></div>
+            <div class="assessment">
+                <label><input type="radio" name="assessment2" value="meets">Meets criteria</label>
+                <label><input type="radio" name="assessment2" value="doesnot">Does not meet criteria</label>
+            </div>
+        </div>
+    </div>
+
+<div class="section">
+    <h2></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
+        <!-- FRONT -->
+        <div class="camera-box">
+            <h4></h4>
+            <div class="camera-container">
+                <video id="video-front" autoplay playsinline style="display:none;"></video>
+                <img id="photo-front" style="display:none;">
+                <div id="placeholder-front" class="placeholder">No photo yet</div>
+            </div>
+            <div style="margin-top:10px;">
+                <button type="button" id="start-front">Start Camera</button>
+                <button type="button" id="capture-front" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-front" style="display:none;">Retake</button>
+            </div>
+        </div>
+
+        <!-- BACK -->
+        <div class="camera-box">
+            <h4></h4>
+            <div class="camera-container">
+                <video id="video-back" autoplay playsinline style="display:none;"></video>
+                <img id="photo-back" style="display:none;">
+                <div id="placeholder-back" class="placeholder">No photo yet</div>
+            </div>
+            <div style="margin-top:10px;">
+                <button type="button" id="start-back">Start Camera</button>
+                <button type="button" id="capture-back" disabled>Capture</button>
+                <button type="button" class="btn-clear" id="retake-back" style="display:none;">Retake</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2></h2>
+    <div style="background:#e8f5e8;padding:18px;border-radius:8px;font-size:18px;">
+        <strong><span id="score-display">0%</span></strong>
+    </div>
+    <div class="assessment" style="margin:25px 0;">
+        <label><input type="radio" name="overall" value="competent" required>Competent</label>
+        <label><input type="radio" name="overall" value="notyet"> Not yet Competent</label>
+    </div>
+    <label></label>
+    <textarea id="summaryComments"></textarea>
+</div>
+
+<div class="section">
+    <h2></h2>
+    <div class="signature">
+        <div><h3>Learner signature</h3><canvas id="learnerSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Assessor signature</h3><canvas id="assessorSig"></canvas><input type="text" placeholder="or type name"></div>
+        <div><h3>Moderator signature</h3><canvas id="moderatorSig"></canvas><input type="text" placeholder="or type name"></div>
+    </div>
+    <div style="text-align:center;margin-top:30px;">
+        <button type="button" class="btn-print" onclick="validateAndPrint()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+// Set today's date by default
+document.getElementById('assessmentDate').valueAsDate = new Date('2025-12-01');
+
+// Calculate score
+function calculateScore() {
+    const meets = document.querySelectorAll('.assessment input[value="meets"]:checked').length;
+    const total = document.querySelectorAll('.criteria').length;
+    const percentage = total > 0 ? Math.round((meets / total) * 100) : 0;
+    document.getElementById('score-display').textContent = percentage + '%';
+}
+
+// Print validation
+function validateAndPrint() {
+    if (!document.querySelector('input[name="overall"]:checked')) {
+        alert('Please select Competent or Not Yet Competent');
+        return;
+    }
+    window.print();
+}
+
+function setupCamera(id) {
+    let stream = null;
+    const video = document.getElementById(`video-${id}`);
+    const photo = document.getElementById(`photo-${id}`);
+    const placeholder = document.getElementById(`placeholder-${id}`);
+    const startBtn = document.getElementById(`start-${id}`);
+    const captureBtn = document.getElementById(`capture-${id}`);
+    const retakeBtn = document.getElementById(`retake-${id}`);
+
+    startBtn.onclick = async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment', width: { ideal: 300 }, height: { ideal: 300 } }
+            });
+            video.srcObject = stream;
+            video.style.display = 'block';
+            photo.style.display = 'none';
+            placeholder.style.display = 'none';
+            captureBtn.disabled = false;
+        } catch (err) {
+            alert('Camera not available');
+        }
+    };
+
+    captureBtn.onclick = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        photo.src = canvas.toDataURL('image/jpeg', 0.9);
+        photo.style.display = 'block';
+        video.style.display = 'none';
+        placeholder.style.display = 'none';
+        retakeBtn.style.display = 'inline-block';
+        captureBtn.disabled = true;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+
+    retakeBtn.onclick = () => {
+        photo.style.display = 'none';
+        retakeBtn.style.display = 'none';
+        placeholder.style.display = 'flex';
+        captureBtn.disabled = true;
+        if (stream) stream.getTracks().forEach(t => t.stop());
+    };
+}
+
+// Signature pads
+['learnerSig', 'assessorSig', 'moderatorSig'].forEach(id => {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+
+    let drawing = false;
+
+    const startDrawing = (e) => {
+        drawing = true;
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX || e.touches[0].clientX) - rect.left;
+        const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    };
+
+    // Fix high-DPI scaling and pointer coordinates so the line follows the pointer correctly
+    const resizeCanvas = () => {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        // set internal pixel size to CSS size * ratio
+        canvas.width = Math.round(rect.width * ratio);
+        canvas.height = Math.round(rect.height * ratio);
+        // map drawing calls so we can use CSS pixel coordinates directly
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        // keep stroke style consistent after transform
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const draw = (e) => {
+        if (!drawing) return;
+        const rect = canvas.getBoundingClientRect();
+        const clientX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0].clientX);
+        const clientY = (e.clientY !== undefined) ? e.clientY : (e.touches && e.touches[0].clientY);
+        if (clientX === undefined || clientY === undefined) return;
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    };
+
+    const stopDrawing = () => { drawing = false; };
+
+    canvas.addEventListener('mousedown', (e) => { startDrawing(e); });
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+
+    // Touch support
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDrawing(e); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e); }, { passive: false });
+    canvas.addEventListener('touchend', (e) => { e.preventDefault(); stopDrawing(e); }, { passive: false });
+});
+
+// Initialize
+calculateScore();
+document.querySelectorAll('.assessment input').forEach(input => input.addEventListener('change', calculateScore));
+setupCamera('q1');
+setupCamera('q2');
+setupCamera('q3');
+setupCamera('q4');
+setupCamera('q5');
+setupCamera('q6');
+setupCamera('front');
+setupCamera('back');
+</script>
+</body>
+</html>
